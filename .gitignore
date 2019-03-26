@@ -1,0 +1,10 @@
+data
+*.ali
+*.id0
+*.id1
+*.id2
+*.nam
+*.o
+*.til
+
+mnist_train_main
