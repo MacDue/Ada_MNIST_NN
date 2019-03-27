@@ -7,4 +7,6 @@ data
 *.o
 *.til
 
+*.dat
+mnist_test_main
 mnist_train_main

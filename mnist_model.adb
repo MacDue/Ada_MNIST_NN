@@ -21,11 +21,16 @@ package body MNIST_Model is
   begin
 
     if RandomWeights then
+
+      -- Interesting (re)-discovery:
+      -- The range of the initial weights is very important to if the trained model
+      -- will will fit at all or even do anyway...
+
       -- Random hidden layer weights
       for PixelIndex in Model.InputLayer.Outputs'Range loop
         for HiddenNodeIndex in Model.HiddenLayer.Inputs'Range loop
           Model.HiddenLayer.Weights(PixelIndex, HiddenNodeIndex)
-            := Long_Float(Random(Gen) / 2.0); -- 0.0 to 0.5
+            := Long_Float(Random(Gen)) - 0.5; -- -0.5 to 0.5
         end loop;
       end loop;
 
@@ -34,7 +39,7 @@ package body MNIST_Model is
         for OutputNodeIndex in Model.OutputLayer.Inputs'Range loop
           Model.OutputLayer.Weights(HiddenNodeIndex, OutputNodeIndex)
             -- Init with 'good' random crap
-            := Long_Float(((Random(Gen) - 0.5) * 10.0) / (10.0 * Float(Model.OutputLayer.Outputs'Last)));
+            := ((Long_Float(Random(Gen)) - 0.5) * 20.0) / (10.0 * Long_Float(Model.OutputLayer.Outputs'Length));
         end loop;
       end loop;
     end if;

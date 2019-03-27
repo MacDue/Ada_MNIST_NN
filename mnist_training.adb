@@ -1,16 +1,18 @@
+with Ada.Text_IO; use Ada.Text_IO;
+
 with MNIST;
 with NN_Utils; use NN_Utils;
 with Interfaces; use Interfaces;
 
 package body MNIST_Training is
 
-  Epochs : Natural := 512;
+  MaxEpochs : Positive := 512;
   LearningRate : Long_Float :=  1.0E-3;
   Momentum : Long_Float :=  0.9;
 
-  procedure SetEpochs(NewEpochs : Natural) is
+  procedure SetMaxEpochs(NewMaxEpochs : Positive) is
   begin
-    Epochs := NewEpochs;
+    MaxEpochs := NewMaxEpochs;
   end;
 
   procedure SetLearningRate(NewLearningRate : Long_Float) is
@@ -119,13 +121,14 @@ package body MNIST_Training is
     -- Finished!
   end;
 
-  procedure TrainingStep(
+  function TrainingStep(
     MNIST_Model : Model_Type;
     Sample : MNIST.Image_Ptr;
     Label : MNIST.Label
-  ) is
+  ) return Positive is
     ExpectedOutputs : Array_Of_Doubles (0 .. MNIST_Model.OutputLayer.Outputs'Last);
     -- Can't do := (Natural(Label) => 1.0, others => 0), reason unknown
+    Epsilon : constant Long_Float := 1.0E-3;
   begin
     -- Set expected
     ExpectedOutputs(Natural(Label)) := 1.0;
@@ -134,16 +137,31 @@ package body MNIST_Training is
     for Y in Sample'Range(2) loop
       for X in Sample'Range(1) loop
         MNIST_Model.InputLayer.Outputs(
-          X + (Y * (Sample'Last(1) + 1))
+          X + (Y * Sample'Length(1))
         ) := (if Sample(X, Y) = 0 then 0.0 else 1.0);
       end loop;
     end loop;
 
     -- Train
-    for Epoch in 1 .. Epochs loop
-      Perceptron(MNIST_Model);
-      BackPropagation(MNIST_Model, ExpectedOutputs);
-    end loop;
+    declare
+      Error : Long_Float := 0.0;
+      EpochsTaken : Positive := MaxEpochs;
+    begin
+      for Epoch in 1 .. MaxEpochs loop
+        Perceptron(MNIST_Model);
+        BackPropagation(MNIST_Model, ExpectedOutputs);
+
+        Error := SquareError(MNIST_Model.OutputLayer.Outputs, ExpectedOutputs);
+
+        if Error < Epsilon then
+          EpochsTaken := Epoch;
+          exit;
+        end if;
+      end loop;
+
+      Put_Line("Error:" & Long_Float'Image(Error));
+      return EpochsTaken;
+    end;
   end;
 
 end MNIST_Training;

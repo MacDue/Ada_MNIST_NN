@@ -1,6 +1,5 @@
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Command_Line; use Ada.Command_Line;
-with GNAT.OS_Lib;
 
 with MNIST;
 with MNIST_Training; use MNIST_Training;
@@ -11,10 +10,10 @@ procedure MNIST_Train_Main is
   TrainLabels : MNIST.Label_Set_Ptr;
   MNIST_Model : Model_Type;
 begin
-
   if Argument_Count /= 1 then
-    Put_Line("Provide a file path for the model save");
-    GNAT.OS_Lib.OS_Exit(1);
+    Put_Line("Provide a file path for the model to be saved");
+    Set_Exit_Status(Failure);
+    return;
   end if;
 
   MNIST.LoadTrain;
@@ -27,23 +26,30 @@ begin
     OutputLayerSize => 10
   );
 
-  for SampleIndex in TrainImages'Range loop
-    Put_Line("Training on sample"
-      & Natural'Image(SampleIndex +1) & " /" & Natural'Image(TrainImages'Last +1));
-
-    TrainingStep(
-      MNIST_Model,
-      TrainImages(SampleIndex),
-      TrainLabels(SampleIndex)
-    );
-  end loop;
-
+  -- Run training...
   declare
+    SampleTrainingEpoch : Positive;
     OutputFilePath : constant String := Argument(1);
   begin
+    for SampleIndex in TrainImages'Range loop
+      Put_Line("Training on sample"
+        & Natural'Image(SampleIndex +1) & " /" & Natural'Image(TrainImages'Last +1));
+
+      SampleTrainingEpoch := TrainingStep(
+        MNIST_Model,
+        TrainImages(SampleIndex),
+        TrainLabels(SampleIndex)
+      );
+
+      Put_Line("Done in" & Positive'Image(SampleTrainingEpoch) & " epochs");
+      New_Line;
+    end loop;
+
+    -- Save model...
     Put_Line("Writing model to: " & OutputFilePath);
-    WriteModelFile(Argument(1), MNIST_Model);
+    WriteModelFile(OutputFilePath, MNIST_Model);
   end;
 
+  -- Clean up...
   MNIST.FreeData;
 end;
