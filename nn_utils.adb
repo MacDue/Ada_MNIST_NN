@@ -1,5 +1,6 @@
-with Ada.Numerics; use Ada.Numerics;
+with Ada.Unchecked_Deallocation;
 with Ada.Numerics.Generic_Elementary_Functions;
+with Ada.Numerics; use Ada.Numerics;
 
 package body NN_Utils is
 
@@ -46,6 +47,26 @@ package body NN_Utils is
     );
   begin
     return Layer;
+  end;
+
+  procedure FreeLayerInputs is new Ada.Unchecked_Deallocation(Layer_Inputs, Layer_Inputs_Ptr);
+  procedure FreeLayerWeights is new Ada.Unchecked_Deallocation(Layer_Weights, Layer_Weights_Ptr);
+  procedure FreeLayerOutputs is new Ada.Unchecked_Deallocation(Layer_Outputs, Layer_Outputs_Ptr);
+  procedure FreeLayerBackpropCache is new Ada.Unchecked_Deallocation(Layer_Backprop_Cache, Layer_Backprop_Cache_Ptr);
+  procedure FreeLayerWeightDeltas is new Ada.Unchecked_Deallocation(Layer_Weights_Delta, Layer_Weights_Delta_Ptr);
+
+  procedure FreeInputLayer(InputLayer : in out Input_Layer_Type) is
+  begin
+    FreeLayerOutputs(InputLayer.Outputs);
+  end;
+
+  procedure FreeLayer(Layer : in out Layer_Type) is
+  begin
+    FreeLayerInputs(Layer.Inputs);
+    FreeLayerWeights(Layer.Weights);
+    FreeLayerOutputs(Layer.Outputs);
+    FreeLayerBackpropCache(Layer.BackpropCache);
+    FreeLayerWeightDeltas(Layer.WeightDeltas);
   end;
 
 end NN_Utils;

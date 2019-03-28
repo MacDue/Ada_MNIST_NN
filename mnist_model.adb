@@ -155,4 +155,11 @@ package body MNIST_Model is
     return MNIST_Model;
   end;
 
+  procedure FreeModel(MNIST_Model : in out Model_Type) is
+  begin
+    FreeInputLayer(MNIST_Model.InputLayer);
+    FreeLayer(MNIST_Model.HiddenLayer);
+    FreeLayer(MNIST_Model.OutputLayer);
+  end;
+
 end MNIST_Model;

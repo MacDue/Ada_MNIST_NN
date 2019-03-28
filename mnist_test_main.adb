@@ -31,7 +31,7 @@ begin
   begin
     MNIST_Model := ReadModelFile(
       FilePath => InputFilePath,
-      InputLayerSize => (TestImages(0)'Last(1)+1) * (TestImages(0)'Last(2)+1),
+      InputLayerSize => TestImages(0)'Length(1) * TestImages(0)'Length(2),
       HiddenLayerSize => 128,
       OutputLayerSize => 10
     );
@@ -45,7 +45,7 @@ begin
         for X in TestImage'Range(1) loop
           -- Put (if TestImage(X, Y) /= 0 then '@' else ' ');
           MNIST_Model.InputLayer.Outputs(
-            X + (Y * (TestImage'Last(1) + 1))
+            X + (Y * TestImage'Length(1))
           ) := (if TestImage(X, Y) = 0 then 0.0 else 1.0);
         end loop;
         -- New_Line;
@@ -77,5 +77,5 @@ begin
   end;
 
   MNIST.FreeData;
-
+  FreeModel(MNIST_Model);
 end;

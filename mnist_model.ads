@@ -26,4 +26,6 @@ package MNIST_Model is
     InputLayerSize, HiddenLayerSize, OutputLayerSize : Natural
   ) return Model_Type;
 
+  procedure FreeModel(MNIST_Model : in out Model_Type);
+
 end MNIST_Model;

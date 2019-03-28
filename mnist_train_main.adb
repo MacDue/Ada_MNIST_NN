@@ -21,7 +21,7 @@ begin
   TrainLabels := MNIST.GetTrainLabels;
 
   MNIST_Model := CreateModel(
-    InputLayerSize => (TrainImages(0)'Last(1)+1) * (TrainImages(0)'Last(2)+1),
+    InputLayerSize => TrainImages(0)'Length(1) * TrainImages(0)'Length(2),
     HiddenLayerSize => 128,
     OutputLayerSize => 10
   );
@@ -52,4 +52,5 @@ begin
 
   -- Clean up...
   MNIST.FreeData;
+  FreeModel(MNIST_Model);
 end;

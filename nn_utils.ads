@@ -31,11 +31,17 @@ package NN_Utils is
     Outputs : Layer_Outputs_Ptr;
   end record;
 
+  -- https://towardsdatascience.com/activation-functions-neural-networks-1cbd9f8d91d6
+  function Sigmoid(X : Long_Float) return Long_Float;
+
+  -- TODO: Test ReLU
+
+  function SquareError(Outputs : Layer_Outputs_Ptr; Expected : Array_Of_Doubles) return Long_Float;
+
   function CreateInputLayer(Layer_Size : Natural) return Input_Layer_Type;
   function CreateLayer(Input_Size, Layer_Size: Natural) return Layer_Type;
 
-  function Sigmoid(X : Long_Float) return Long_Float;
-
-  function SquareError(Outputs : Layer_Outputs_Ptr; Expected : Array_Of_Doubles) return Long_Float;
+  procedure FreeInputLayer(InputLayer : in out Input_Layer_Type);
+  procedure FreeLayer(Layer : in out Layer_Type);
 
 end NN_Utils;

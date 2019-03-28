@@ -152,7 +152,6 @@ package body MNIST_Training is
         BackPropagation(MNIST_Model, ExpectedOutputs);
 
         Error := SquareError(MNIST_Model.OutputLayer.Outputs, ExpectedOutputs);
-
         if Error < Epsilon then
           EpochsTaken := Epoch;
           exit;

@@ -1,8 +1,8 @@
 with Ada.Sequential_IO;
+with Ada.Unchecked_Deallocation;
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Assertions; use Ada.Assertions;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-with Ada.Unchecked_Deallocation;
 
 package body MNIST is
 
