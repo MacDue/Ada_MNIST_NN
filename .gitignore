@@ -1,4 +1,5 @@
 data
+obj
 *.ali
 *.id0
 *.id1
@@ -10,3 +11,4 @@ data
 *.dat
 mnist_test_main
 mnist_train_main
+visualise

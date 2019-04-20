@@ -1,0 +1,6 @@
+with "sdlada";
+project visualise is
+	for Main use("visualise.adb");
+	for Object_Dir use "obj";
+	for Exec_Dir use ".";
+end visualise;
